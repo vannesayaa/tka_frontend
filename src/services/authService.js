@@ -3,21 +3,29 @@ const API_URL = "http://localhost:8000";
 
 export const LoginUser = async (email, password) => {
   try {
-    const response = await axios.post("${API_URL}/Login", {
-      email,
-      password,
+    const formData = new URLSearchParams();
+    formData.append("username", email);
+    formData.append("password", password);
+
+    const response = await axios.post(`${API_URL}/auth/login`, formData, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
     });
+
     return response.data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      throw new Error("Email atau password salah, coba lagi.");
+      throw new Error("Email atau password salah.");
     }
-    throw new Error("Terjadi masalah pada server, coba lagi nanti.");
+    throw new Error(
+      error.response?.data?.detail || "Terjadi masalah pada server.",
+    );
   }
 };
 
 export const registerUser = async (email, password) => {
-  // Gabungin manual jadi satu string utuh
+  // Gunakan backtick (`) untuk template literal agar variabel API_URL terbaca
   const url = `${API_URL}/auth/register?role=free`;
 
   const response = await axios.post(url, {

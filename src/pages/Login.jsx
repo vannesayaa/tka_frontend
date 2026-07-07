@@ -1,26 +1,34 @@
 import React, { useState } from "react";
-import { LoginUser } from "../services/authService";
+import { LoginUser } from "../services/authService"; // Pastikan importnya sesuai
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Tombol diklik, email:", email);
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
       const data = await LoginUser(email, password);
-      console.log("Respon API:", data);
-      alert("Login Berhasil!");
-      // Nanti setelah ini kita akan arahkan ke Dashboard
+
+      // Simpan token ke localStorage (Penting buat sesi login)
+      localStorage.setItem("token", data.access_token);
+
+      setSuccess("Login berhasil! Mengalihkan...");
+
+      setTimeout(() => {
+        navigate("/dashboard"); // Arahkan ke halaman utama/dashboard
+      }, 1500);
     } catch (err) {
-      console.error("Error login:", err);
-      setError(err.message || "Terjadi kesalahan saat login");
+      setError(err.message || "Login gagal.");
     } finally {
       setLoading(false);
     }
@@ -31,10 +39,17 @@ const Login = () => {
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-900 rounded-2xl shadow-xl border border-gray-800">
         <h2 className="text-3xl font-bold text-center">Login TKA</h2>
 
-        {/* Tampilkan pesan error jika ada */}
+        {/* Box Error */}
         {error && (
           <div className="p-3 bg-red-900/20 border border-red-700 text-red-400 text-sm rounded-lg text-center">
             {error}
+          </div>
+        )}
+
+        {/* Box Sukses (Hijau) */}
+        {success && (
+          <div className="p-3 bg-emerald-900/20 border border-emerald-700 text-emerald-400 text-sm rounded-lg text-center">
+            {success}
           </div>
         )}
 
@@ -68,16 +83,6 @@ const Login = () => {
             {loading ? "Memproses..." : "Masuk"}
           </button>
         </form>
-
-        <div className="text-center text-sm text-gray-400 mt-4">
-          Belum punya akun?{" "}
-          <a
-            href="/register"
-            className="text-emerald-500 hover:underline font-semibold"
-          >
-            Daftar sekarang
-          </a>
-        </div>
       </div>
     </div>
   );
