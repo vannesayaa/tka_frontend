@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState("paket");
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
 
@@ -9,11 +11,24 @@ const Dashboard = () => {
   const [jenjang, setJenjang] = useState("SD");
   const [mapel, setMapel] = useState("Matematika");
 
-  const packages = [
-    { id: 1, title: "Paket TKA-1", kelas: "12", mapel: "Matematika" },
-    { id: 2, title: "Paket TKA-2", kelas: "11", mapel: "Fisika" },
-    { id: 3, title: "Paket TKA-3", kelas: "12", mapel: "Fisika" },
-  ];
+  useEffect(() => {
+    fetchPackages();
+  }, [jenjang, mapel]);
+
+  const fetchPackages = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/packages?jenjang=${jenjang}&mapel=${mapel)",
+      );
+      const data = await response.json();
+      setPackages(data);
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const upgradePlans = [
     { id: 1, title: "1 Paket Soal", price: "15.000" },
