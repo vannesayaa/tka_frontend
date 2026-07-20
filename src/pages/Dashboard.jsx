@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState("paket");
@@ -11,6 +12,11 @@ const Dashboard = () => {
   const [jenjang, setJenjang] = useState("SD");
   const [mapel, setMapel] = useState("Matematika");
 
+  const navigate = useNavigate();
+  const handleMulai = (id) => {
+    navigate(`/PaketSoal/${id}`);
+  };
+
   useEffect(() => {
     fetchPackages();
   }, [jenjang, mapel]);
@@ -19,7 +25,7 @@ const Dashboard = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:8000/packages?jenjang=${jenjang}&mapel=${mapel)",
+        `http://localhost:8000/packages?jenjang=${jenjang}&mapel=${mapel}`,
       );
       const data = await response.json();
       setPackages(data);
@@ -41,11 +47,13 @@ const Dashboard = () => {
       return (
         <div className="space-y-6">
           <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-emerald-100 dark:border-emerald-700 flex gap-4 items-center">
-            <span className="font-bold text-sm">Filter:</span>
+            <span className="font-bold text-sm text-slate-800 darkL text-white">
+              Filter:
+            </span>
             <select
               value={jenjang}
               onChange={(e) => setJenjang(e.target.value)}
-              className="bg-emerald-50 dark:bg-emerald-900 border-none rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-emerald-500"
+              className="bg-emerald-50 dark:bg-emerald-500 border-none rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-emerald-500"
             >
               <option>SD</option>
               <option>SMP</option>
@@ -54,7 +62,7 @@ const Dashboard = () => {
             <select
               value={mapel}
               onChange={(e) => setMapel(e.target.value)}
-              className="bg-emerald-50 dark:bg-emerald-900 border-none rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-emerald-500"
+              className="bg-emerald-50 dark:bg-emerald-500 border-none rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-emerald-500"
             >
               <option>Matematika</option>
               <option>Bahasa Inggris</option>
@@ -74,7 +82,10 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-500 mb-4">
                   Kelas: {pkg.kelas} | {pkg.mapel}
                 </p>
-                <button className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition">
+                <button
+                  onClick={() => handleMulai(pkg.id)}
+                  className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition cursor-pointer"
+                >
                   Mulai
                 </button>
               </div>

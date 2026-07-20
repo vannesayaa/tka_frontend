@@ -1,3 +1,5 @@
+export default App;
+
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -8,6 +10,7 @@ import {
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import PaketSoal from "./pages/PaketSoal";
 
 function App() {
   return (
@@ -17,9 +20,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/paketsoal" element={<PaketSoal />} />
       </Routes>
     </Router>
   );
 }
-
-export default App;
